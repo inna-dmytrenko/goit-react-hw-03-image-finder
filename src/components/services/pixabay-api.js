@@ -7,22 +7,10 @@ export function fetchPixabay(searchValue, page) {
     if (response.ok) {
       return response.json();
     }
-    return Promise.reject(new Error(`Нет `));
+    return Promise.reject(new Error(console.log(`Упс, что-то пошло не так`)));
   });
 }
 const api = {
   fetchPixabay,
 };
 export default api;
-
-// const BASE_URL = 'https://pixabay.com/api/';
-// const API_KEY = '21764210-8d882ab68fe5176a0369b7247';
-
-// export default function fetchPixabay(searchValue, page) {
-//   const url = `${BASE_URL}?image_type=photo&orientation=horizontal&q=${searchValue}&page=${page}&per_page=12&key=${API_KEY}`;
-//   return fetch(url)
-//     .then(r => r.data.hits)
-//     .catch(error => {
-//       console.log(alert('Упс, что-то пошло не так'));
-//     });
-// }

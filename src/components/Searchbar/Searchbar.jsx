@@ -25,15 +25,12 @@ export default class Searchbar extends Component {
   render() {
     return (
       <SearchbarDiv>
-        <SearchForm className="SearchForm" onSubmit={this.handleSubmit}>
-          <SearchFormButton type="submit" className="SearchForm-button">
-            <SearchFormButtonLabel className="SearchForm-button-label">
-              Search
-            </SearchFormButtonLabel>
+        <SearchForm onSubmit={this.handleSubmit}>
+          <SearchFormButton type="submit">
+            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
           </SearchFormButton>
 
           <SearchFormInput
-            className="SearchForm-input"
             type="text"
             autoComplete="off"
             autoFocus
