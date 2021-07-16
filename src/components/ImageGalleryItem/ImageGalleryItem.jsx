@@ -1,5 +1,5 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
 import {
   ImageGalleryItemEl,
   ImageGalleryItemImage,
@@ -7,16 +7,21 @@ import {
 
 export default class ImageGalleryItem extends Component {
   render() {
-    const { src, alt, url, onOpen } = this.props;
     return (
       <ImageGalleryItemEl>
         <ImageGalleryItemImage
-          src={src}
-          alt={alt}
-          url={url}
-          onClick={() => onOpen(url, alt)}
+          src={this.props.src}
+          alt={this.props.alt}
+          url={this.props.url}
+          onClick={() => this.props.onOpen(this.props.url, this.props.alt)}
         />
       </ImageGalleryItemEl>
     );
   }
 }
+ImageGalleryItem.propTyes = {
+  src: PropTypes.string,
+  alt: PropTypes.string,
+  url: PropTypes.string,
+  onClick: PropTypes.func.isRequired,
+};

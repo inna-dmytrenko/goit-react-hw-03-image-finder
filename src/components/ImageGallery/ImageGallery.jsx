@@ -1,5 +1,6 @@
 import { Component } from 'react';
-
+import PropTypes from 'prop-types';
+import Modal from '../Modal/Modal';
 import pixabayApi from '../services/pixabay-api';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import PhotoLoader from '../Loader/Loader';
@@ -18,7 +19,9 @@ export default class ImageGallery extends Component {
     error: null,
     page: 1,
     status: Status.IDLE,
-    imgLarge: this.props.imgLarge,
+
+    showModal: false,
+    imgLarge: { url: '', alt: '' },
   };
   async componentDidUpdate(prevProps) {
     const nextQuery = this.props.photoQuery;
@@ -65,9 +68,10 @@ export default class ImageGallery extends Component {
 
   render() {
     const status = this.state.status;
+    const { url, alt } = this.state.imgLarge;
 
     if (status === 'idle') {
-      return <div>search</div>;
+      return <div></div>;
     }
     if (status === 'pending') {
       return <PhotoLoader />;
@@ -79,17 +83,15 @@ export default class ImageGallery extends Component {
       return (
         <div>
           <ImageGalleryList>
-            {this.state.photo.map(
-              ({ id, webformatURL, tags, largeImageURL }) => (
-                <ImageGalleryItem
-                  key={id}
-                  src={webformatURL}
-                  alt={tags}
-                  url={largeImageURL}
-                  onOpen={this.handelPhotoClick}
-                ></ImageGalleryItem>
-              ),
-            )}
+            {this.state.photo.map(hit => (
+              <ImageGalleryItem
+                key={hit.id}
+                src={hit.webformatURL}
+                alt={hit.tags}
+                url={hit.largeImageURL}
+                onOpen={this.handelPhotoClick}
+              ></ImageGalleryItem>
+            ))}
           </ImageGalleryList>
 
           {this.state.photo.length >= 12 && (
@@ -101,8 +103,21 @@ export default class ImageGallery extends Component {
               }}
             ></Button>
           )}
+          {this.state.showModal && (
+            <Modal
+              onClose={() => {
+                this.setState(({ showModal }) => ({ showModal: !showModal }));
+              }}
+            >
+              <img src={url} alt={alt} />
+            </Modal>
+          )}
         </div>
       );
     }
   }
 }
+
+ImageGallery.propTypes = {
+  nextQuery: PropTypes.string,
+};
