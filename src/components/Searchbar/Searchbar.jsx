@@ -9,18 +9,18 @@ import {
 } from './Searchbar.styled';
 export default class Searchbar extends Component {
   state = {
-    photoName: '',
+    query: '',
   };
   handleNameChange = e => {
-    this.setState({ photoName: e.currentTarget.value });
+    this.setState({ query: e.currentTarget.value });
   };
   handleSubmit = e => {
     e.preventDefault();
-    if (this.state.photoName.trim() === '') {
+    if (this.state.query.trim() === '') {
       return toast.warning('Please enter something!');
     }
-    this.props.onSubmit(this.state.photoName);
-    this.setState({ photoName: '' });
+    this.props.onSubmit(this.state.query);
+    this.setState({ query: '' });
   };
   render() {
     return (
@@ -35,7 +35,7 @@ export default class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={this.state.photoName}
+            value={this.state.query}
             onChange={this.handleNameChange}
           />
         </SearchForm>

@@ -12,3 +12,8 @@ export const ImageGalleryList = styled.ul`
   margin-left: auto;
   margin-right: auto;
 `;
+export const Rejected = styled.p`
+  font-size: 24px;
+  color: red;
+  text-align: center;
+`;

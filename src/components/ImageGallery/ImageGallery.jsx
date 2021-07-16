@@ -1,17 +1,16 @@
 import { Component } from 'react';
 
-import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import pixabayApi from '../services/pixabay-api';
-import { ImageGalleryList } from './ImageGallerystyled';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import PhotoLoader from '../Loader/Loader';
-import Modal from '../Modal/Modal';
+import Button from '../Button/Button';
+import { ImageGalleryList, Rejected } from './ImageGallerystyled';
 
 const Status = {
   IDLE: 'idle',
   PENDING: 'pending',
   RESOLVED: 'resolved',
   REJECTED: 'rejected',
-  BTN: 'btn',
 };
 export default class ImageGallery extends Component {
   state = {
@@ -19,28 +18,22 @@ export default class ImageGallery extends Component {
     error: null,
     page: 1,
     status: Status.IDLE,
-    showModal: false,
+    imgLarge: this.props.imgLarge,
   };
-  componentDidUpdate(prevProps, prevState) {
-    console.log(prevState.status);
-
-    const nextQuery = this.props.photoInfo;
-    if (prevProps.photoInfo !== nextQuery) {
-      this.setState({ page: 1, photo: [] });
+  async componentDidUpdate(prevProps) {
+    const nextQuery = this.props.photoQuery;
+    const prevQuery = prevProps.photoQuery;
+    if (prevQuery !== nextQuery) {
+      await this.setState({ page: 1, photo: [] });
       this.setState({ status: Status.PENDING });
       this.fetchPixabayPhoto(nextQuery);
-      console.log(nextQuery);
     }
   }
-  fetchPixabayPhoto = nextQuery => {
-    console.log(nextQuery);
-
+  fetchPixabayPhoto = () => {
     pixabayApi
-      .fetchPixabay(this.props.photoInfo, this.state.page)
+      .fetchPixabay(this.props.photoQuery, this.state.page)
 
       .then(({ hits }) => {
-        // console.log(photo.total)
-        console.log(this.props.photoInfo);
         if (hits.length === 0) {
           return this.setState({ status: Status.REJECTED });
         }
@@ -51,7 +44,7 @@ export default class ImageGallery extends Component {
       })
       .catch(error => this.setState({ error, status: Status.REJECTED }));
   };
-  // incrementPage();
+
   scroll = () => {
     setTimeout(() => {
       window.scrollTo({
@@ -64,50 +57,49 @@ export default class ImageGallery extends Component {
   incrementPage = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
   };
+  handelPhotoClick = (url, alt) => {
+    this.setState({ imgLarge: { url, alt } });
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
 
   render() {
-    if (this.state.status === 'idle') {
+    const status = this.state.status;
+
+    if (status === 'idle') {
       return <div>search</div>;
     }
-    if (this.state.status === 'pending') {
-      return <PhotoLoader photoInfo={this.props.photoInfo}></PhotoLoader>;
+    if (status === 'pending') {
+      return <PhotoLoader />;
     }
-    if (this.state.status === 'rejected') {
-      return <div>Oops! Nothing found</div>;
+    if (status === 'rejected') {
+      return <Rejected>Oops! Nothing found</Rejected>;
     }
-    if (this.state.status === 'resolved') {
+    if (status === 'resolved') {
       return (
         <div>
           <ImageGalleryList>
-            {this.state.photo.map(hit => (
-              <ImageGalleryItem
-                key={hit.id}
-                src={hit.webformatURL}
-                alt={hit.tags}
-                url={hit.largeImageURL}
-                onClick={e => {
-                  if (e.target.nodeName === 'IMG') {
-                    this.setState({ showModal: true });
-                    // console.log(this.state.showModal)
-                  }
-                }}
-              ></ImageGalleryItem>
-            ))}
+            {this.state.photo.map(
+              ({ id, webformatURL, tags, largeImageURL }) => (
+                <ImageGalleryItem
+                  key={id}
+                  src={webformatURL}
+                  alt={tags}
+                  url={largeImageURL}
+                  onOpen={this.handelPhotoClick}
+                ></ImageGalleryItem>
+              ),
+            )}
           </ImageGalleryList>
 
           {this.state.photo.length >= 12 && (
-            <button
-              onClick={() => {
+            <Button
+              onClick={e => {
                 this.fetchPixabayPhoto();
                 this.incrementPage();
                 this.scroll();
               }}
-              type="button"
-            >
-              Load more
-            </button>
+            ></Button>
           )}
-          {this.state.showModal && <Modal></Modal>}
         </div>
       );
     }

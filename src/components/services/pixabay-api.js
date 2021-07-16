@@ -1,6 +1,7 @@
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '21764210-8d882ab68fe5176a0369b7247';
 export function fetchPixabay(searchValue, page) {
+  console.log(searchValue);
   return fetch(
     `${BASE_URL}?image_type=photo&orientation=horizontal&q=${searchValue}&page=${page}&per_page=12&key=${API_KEY}`,
   ).then(response => {
