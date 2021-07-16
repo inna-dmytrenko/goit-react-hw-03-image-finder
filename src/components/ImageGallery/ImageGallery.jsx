@@ -40,6 +40,7 @@ export default class ImageGallery extends Component {
         this.setState(prevState => ({
           photo: [...prevState.photo, ...hits],
           status: Status.RESOLVED,
+          page: this.state.page + 1,
         }));
       })
       .catch(error => this.setState({ error, status: Status.REJECTED }));
